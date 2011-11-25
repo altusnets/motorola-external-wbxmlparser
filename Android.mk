@@ -22,7 +22,5 @@ LOCAL_CFLAGS += -DREMOVE_UNUSED
 
 LOCAL_MODULE := libwbxmlparser
 
-LOCAL_PRELINK_MODULE := false
-
 include $(BUILD_SHARED_LIBRARY)
 
