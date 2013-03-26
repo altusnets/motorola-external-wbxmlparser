@@ -2397,10 +2397,12 @@ static WBXMLError decode_wv_integer(WB_UTINY **data, WB_LONG *len)
  */
 static WBXMLError decode_wv_datetime(WB_UTINY **data, WB_LONG *len)
 {
-    WB_UTINY *result = NULL;
-    WB_TINY the_year[5], the_month[3],  the_date[3],
-            the_hour[3], the_minute[3], the_second[3];
-    WB_ULONG the_value = 0;
+    /* Motorola
+     * Reworked to fix a memory leak and to
+     * improve the routine.
+     */
+
+    WB_ULONG year, month, day, hour, minute, second, padding;
 
     /** @todo Test decode_wv_datetime() ! */
 
@@ -2410,38 +2412,42 @@ static WBXMLError decode_wv_datetime(WB_UTINY **data, WB_LONG *len)
     if (*len != 6)
         return WBXML_ERROR_WV_DATETIME_FORMAT;
 
-    if ((result = (WB_UTINY *) wbxml_malloc(17 * sizeof(WB_UTINY))) == NULL)
-        return WBXML_ERROR_NOT_ENOUGH_MEMORY;
+    /* ensure first 2 bits are 0 */
+    padding = (WB_ULONG) (((*data)[0] >> 6) && 0x03);
+    if (padding != 0)
+        return WBXML_ERROR_WV_DATETIME_FORMAT;
 
     /* Get Year */
-    the_value = (WB_ULONG) (((*data)[0] << 6) | (((*data)[1] >> 2) && 0x3F));
-    sprintf(the_year, "%u", the_value);
+    year = (WB_ULONG) (((*data)[0] << 6) | (((*data)[1] >> 2) && 0x3F));
+    if (year > 4095)    /* unsigned covers the <0 case */
+        return WBXML_ERROR_WV_DATETIME_FORMAT;
 
     /* Get Month */
-    the_value = (WB_ULONG) ((((*data)[1] && 0x03) << 2) | (((*data)[2] >> 6) && 0x3F));
-    sprintf(the_month, "%u", the_value);
+    month = (WB_ULONG) ((((*data)[1] && 0x03) << 2) | (((*data)[2] >> 6) && 0x3F));
+    if (month < 1 || month > 12)
+        return WBXML_ERROR_WV_DATETIME_FORMAT;
 
     /* Get Day */
-    the_value = (WB_ULONG) (((*data)[2] >> 1) && 0x1F);
-    sprintf(the_date, "%u", the_value);
+    day = (WB_ULONG) (((*data)[2] >> 1) && 0x1F);
+    if (day < 1 || day > 31)
+        return WBXML_ERROR_WV_DATETIME_FORMAT;
 
     /* Get Hour */
-    the_value = (WB_ULONG) ((((*data)[2] && 0x01) << 4) | (((*data)[3] >> 4) && 0x0F));
-    sprintf(the_hour, "%u", the_value);
+    hour = (WB_ULONG) ((((*data)[2] && 0x01) << 4) | (((*data)[3] >> 4) && 0x0F));
+    if (hour > 23)    /* unsigned covers the <0 case */
+        return WBXML_ERROR_WV_DATETIME_FORMAT;
 
     /* Get Minute */
-    the_value = (WB_ULONG) ((((*data)[3] && 0x0F) << 2) | (((*data)[4] >> 6) && 0x03));
-    sprintf(the_minute, "%u", the_value);
+    minute = (WB_ULONG) ((((*data)[3] && 0x0F) << 2) | (((*data)[4] >> 6) && 0x03));
+    if (minute > 59)    /* unsigned covers the <0 case */
+        return WBXML_ERROR_WV_DATETIME_FORMAT;
 
     /* Get Second */
-    the_value = (WB_ULONG) ((*data)[4] && 0x3F);
-    sprintf(the_second, "%u", the_value);
+    second = (WB_ULONG) ((*data)[4] && 0x3F);
+    if (second > 59)    /* unsigned covers the <0 case */
+        return WBXML_ERROR_WV_DATETIME_FORMAT;
 
-    /* Get Time Zone */
-    if ((*data)[5] == 'Z')
-        sprintf((WB_TINY *) result, "%s%s%sT%s%s%sZ", the_year, the_month, the_date, the_hour, the_minute, the_second);
-    else
-        sprintf((WB_TINY *) result, "%s%s%sT%s%s%s", the_year, the_month, the_date, the_hour, the_minute, the_second);
+    /* Time Zone  -- NOT validated */
 
     return WBXML_OK;
 }
