@@ -612,7 +612,7 @@ WBXML_DECLARE(void) wbxml_buffer_remove_trailing_zeros(WBXMLBuffer **buffer)
  */
 static WB_BOOL grow_buff(WBXMLBuffer *buffer, WB_ULONG size)
 {
-    if ((buffer == NULL))
+    if (buffer == NULL)
         return FALSE;
 
     /* Make room for the invisible terminating NUL */
