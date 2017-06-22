@@ -2413,37 +2413,37 @@ static WBXMLError decode_wv_datetime(WB_UTINY **data, WB_LONG *len)
         return WBXML_ERROR_WV_DATETIME_FORMAT;
 
     /* ensure first 2 bits are 0 */
-    padding = (WB_ULONG) (((*data)[0] >> 6) && 0x03);
+    padding = (WB_ULONG) (((*data)[0] >> 6) & 0x03);
     if (padding != 0)
         return WBXML_ERROR_WV_DATETIME_FORMAT;
 
     /* Get Year */
-    year = (WB_ULONG) (((*data)[0] << 6) | (((*data)[1] >> 2) && 0x3F));
+    year = (WB_ULONG) (((*data)[0] << 6) | (((*data)[1] >> 2) & 0x3F));
     if (year > 4095)    /* unsigned covers the <0 case */
         return WBXML_ERROR_WV_DATETIME_FORMAT;
 
     /* Get Month */
-    month = (WB_ULONG) ((((*data)[1] && 0x03) << 2) | (((*data)[2] >> 6) && 0x3F));
+    month = (WB_ULONG) ((((*data)[1] & 0x03) << 2) | (((*data)[2] >> 6) & 0x3F));
     if (month < 1 || month > 12)
         return WBXML_ERROR_WV_DATETIME_FORMAT;
 
     /* Get Day */
-    day = (WB_ULONG) (((*data)[2] >> 1) && 0x1F);
+    day = (WB_ULONG) (((*data)[2] >> 1) & 0x1F);
     if (day < 1 || day > 31)
         return WBXML_ERROR_WV_DATETIME_FORMAT;
 
     /* Get Hour */
-    hour = (WB_ULONG) ((((*data)[2] && 0x01) << 4) | (((*data)[3] >> 4) && 0x0F));
+    hour = (WB_ULONG) ((((*data)[2] & 0x01) << 4) | (((*data)[3] >> 4) & 0x0F));
     if (hour > 23)    /* unsigned covers the <0 case */
         return WBXML_ERROR_WV_DATETIME_FORMAT;
 
     /* Get Minute */
-    minute = (WB_ULONG) ((((*data)[3] && 0x0F) << 2) | (((*data)[4] >> 6) && 0x03));
+    minute = (WB_ULONG) ((((*data)[3] & 0x0F) << 2) | (((*data)[4] >> 6) & 0x03));
     if (minute > 59)    /* unsigned covers the <0 case */
         return WBXML_ERROR_WV_DATETIME_FORMAT;
 
     /* Get Second */
-    second = (WB_ULONG) ((*data)[4] && 0x3F);
+    second = (WB_ULONG) ((*data)[4] & 0x3F);
     if (second > 59)    /* unsigned covers the <0 case */
         return WBXML_ERROR_WV_DATETIME_FORMAT;
 

@@ -18,7 +18,7 @@ LOCAL_SRC_FILES := \
 LOCAL_C_INCLUDES += \
     $(LOCAL_PATH)/hdr
 
-LOCAL_CFLAGS += -DREMOVE_UNUSED
+LOCAL_CFLAGS += -DREMOVE_UNUSED -Wno-unused-parameter
 
 LOCAL_MODULE := libwbxmlparser
 
