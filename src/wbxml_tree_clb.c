@@ -80,11 +80,7 @@ void wbxml_tree_clb_end_document(void *ctx)
 
 void wbxml_tree_clb_start_element(void *ctx, WBXMLTag *element, WBXMLAttribute **attrs, WB_BOOL empty)
 {
-	WB_ULONG j = 0;
-	WB_ULONG i = 0;
-	WB_UTINY *str = NULL;
     WBXMLTreeClbCtx *tree_ctx = (WBXMLTreeClbCtx *) ctx;
-	WB_ULONG public_id = tree_ctx->tree->lang->publicID->wbxmlPublicID;
     WBXMLTreeNode *node = NULL;
 
     if (tree_ctx->error != WBXML_OK)
@@ -207,7 +203,6 @@ void wbxml_tree_clb_characters(void *ctx, WB_UTINY *ch, WB_ULONG start, WB_ULONG
 {
     WBXMLTreeClbCtx *tree_ctx = (WBXMLTreeClbCtx *) ctx;
     WBXMLTreeNode *node = NULL;
-	WB_UTINY *str = NULL;
 
     if (tree_ctx->error != WBXML_OK)
         return;

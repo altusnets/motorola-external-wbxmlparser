@@ -1852,7 +1852,6 @@ static WBXMLError wbxml_encode_wv_content(WBXMLEncoder *encoder, WB_UTINY *buffe
 {
     const WBXMLExtValueEntry *ext = NULL;
     WBXMLWVDataType data_type = WBXML_WV_DATA_TYPE_STRING;
-    WB_ULONG ucs4_ch = 0;
 
     /*
      *  Specific Data Type Elements:
