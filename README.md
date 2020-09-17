@@ -1,6 +1,8 @@
+# github.com/ALTUSNETS\
+
 WBXML Library
 -------------
-Copyright (C) 2002-2003  Aymerick Jéhanne
+Copyright (C) 2002-2003  Aymerick JÃ©hanne
 Copyright (C) 2006 Motorola
 http://opensource.motorola.com
  
